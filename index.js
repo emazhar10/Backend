@@ -18,17 +18,21 @@ async function asyncMain() {
 
   try {
     const eesha = {
-      firstname: "Eesha",
-      lastname: "Mazhar",
-      email: "eesha@gmail.com",
+      firstName: "Eesha",
+      lastName: "Mazhar",
+      email: "eesha4@gmail.com",
+      password: "12345678"
     };
     await User.create(eesha);
   } catch (error) {
     console.error("Unable to insert to the database:", error);
   }
 
-  const users = await User.findAll();
+  const users = await User.findAll({
+    order: ["id"],
+  });
   console.log(users);
+
 }
 
 asyncMain();

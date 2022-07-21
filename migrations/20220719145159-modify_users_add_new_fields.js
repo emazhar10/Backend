@@ -22,5 +22,3 @@ module.exports = {
     await queryInterface.removeColumn("Users", "password");
   },
 };
-
-

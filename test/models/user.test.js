@@ -2,65 +2,81 @@ const db = require("../../models");
 const { User } = db;
 
 describe("Testing User Model", () => {
+  const validParams = {
+    firstName: "Eesha",
+    lastName: "Mazhar",
+    email: "eesha@gmail.com",
+    password: "12345678",
+  };
+
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
+    await User.create(validParams);
   });
 
   afterAll(async () => {
     await db.sequelize.close();
   });
 
+  it("returns full name of the user", async () => {
+    const checkUser = await User.findByPk(1);
+    expect(checkUser.fullName).toBe(
+      `${checkUser.firstName} ${checkUser.lastName}`
+    );
+  });
+
   it("Does not allow duplicate emails", async () => {
-    const validParams = {
-      firstName: "Eesha",
-      lastName: "Mazhar",
-      email: "eesha@gmail.com",
-      password: "12345678",
-    };
-
     const duplicateEmail = {
-      firstName: "Eesha",
-      lastName: "Mazhar",
+      ...validParams,
       email: validParams.email,
-      password: "12345678",
     };
-
-    await User.create(validParams);
 
     try {
       await User.create(duplicateEmail);
-      expect(true).toBe(false);
+      throw Error("user should not be created");
     } catch (error) {
-      expect(error.message).toBe("Validation error");
+      expect(error.message).toBe("Validation error: User with this email already exists");
+    }
+  });
+
+  it("Does not allow invalid emails", async () => {
+    const invalidEmail = {
+     ...validParams,
+      email: "invalidEmail",
+    };
+
+    try {
+      await User.create(invalidEmail);
+      throw Error("user should not be created");
+    } catch (error) {
+      expect(error.message).toBe("Validation error: Email is not valid");
     }
   });
 
   it("Password should be 8 length atleast ", async () => {
     const invalidPassword = {
-      firstName: "Eesha1",
-      lastName: "Mazhar1",
+      ...validParams,
       email: "eesha1@gmail.com",
       password: "1234",
     };
 
     try {
       await User.create(invalidPassword);
-      expect(true).toBe(false);
+      throw Error("user should not be created");
     } catch (error) {
-      expect(error.message).toBe("Password should be 8 characters long");
+      expect(error.message).toBe("Validation error: Password should be 8 characters long");
     }
   });
 
-  it("Saves the user in database", async () => {
-    const validParams = {
-      firstName: "Eesha",
-      lastName: "Mazhar",
-      fullName: firstName + ' ' + lastName,
-      email: "eesha.mazhar@gmail.com",
-      password: "12345678",
-    };
-    const user = await User.create(validParams);
-    const checkUser = await User.findByPk(user.id);
-    expect(user.firstName).toBe(checkUser.firstName);
+  it("check the full name condition", async () => {
+    try {
+      await User.build({
+        ...validParams,
+        fullName: "Eesha Mazhar",
+      });
+      throw Error("this should not happen");
+    } catch (error) {
+      expect(error.message).toBe("Do not try to set the `fullName` value!");
+    }
   });
 });

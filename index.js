@@ -1,6 +1,8 @@
 const db = require("./models");
 const { User } = db;
 
+
+
 async function asyncMain() {
   try {
     await db.sequelize.authenticate();
@@ -9,26 +11,29 @@ async function asyncMain() {
     console.error("Unable to connect to the database:", error);
   }
 
+  var firstName = "Eesha"
+  var lastName = "Mazhar" 
+  
   try {
     const eesha = {
-      firstName: "Eesha",
-      lastName: "Mazhar",
-      fullName: firstName + ' ' + lastName ,
-      email: "eesha9@gmail.com",
+      firstName,
+      lastName,
+      email: "eesha26@gmail.com",
       password: "12345678"
 
     };
-    await User.create(eesha);
-  } catch (error) {
+    const user1 = await User.create(eesha);
+  console.log(user1.fullName);
+} catch (error) {
     console.error("Unable to insert to the database:", error);
   }
 
-  
+  //console.log(fullName);
+
   const users = await User.findAll({
     order: ["id"],
   });
-  console.log(users);
+  console.log(users[0]);
 
 }
-
 asyncMain();

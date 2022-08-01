@@ -13,6 +13,7 @@
     "sequelize-cli": "^6.4.1"
   },
   "scripts": {
-    "test": "NODE_ENV=test jest --runInBand"
+    "test": "NODE_ENV=test jest --runInBand",
+    "db:reset": "sequelize-cli db:drop && sequelize-cli db:create && sequelize-cli db:migrate"
   }
 }

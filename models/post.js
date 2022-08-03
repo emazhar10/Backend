@@ -3,7 +3,9 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Posts extends Model {
     static associate(models) {
+     Posts.hasMany(models.Comments, { as: "comment", foreignKey: "userId"});
       Posts.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+
     }
   }
   Posts.init(

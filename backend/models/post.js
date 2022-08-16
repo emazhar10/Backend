@@ -3,9 +3,18 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Posts extends Model {
     static associate(models) {
-     Posts.hasMany(models.Comments, { as: "comment", foreignKey: "userId"});
-      Posts.belongsTo(models.User, { foreignKey: "userId", as: "user" });
-
+    Posts.hasMany(models.Comments, { foreignKey: "postId", as: "comments"});
+     Posts.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+    //  Posts.associate = function (models) {
+    //   Posts.belongsTo(models.Comments, {
+    //     foreignKey: 'userId',
+    //     as: 'comments'
+    //   });
+    //   Posts.hasMany(models.User, {
+    //     foreignKey: 'UserId'
+    //   });
+    // };
+  
     }
   }
   Posts.init(
@@ -23,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       userId: DataTypes.INTEGER,
+      //commentId: DataTypes.INTEGER,
       title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -34,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
             if (post) {
               throw new Error("post with this title already exists");
             }
+   
           },
         },
       },
